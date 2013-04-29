@@ -1,37 +1,91 @@
 package Game;
 
-import java.awt.event.KeyEvent;
 
-public class Player {
+
+public class Player implements obj{
 	
-	private int x,y,dx,dy,healt,damage,weapon;
-	private String img;
+	private int x,y,dx,dy,healt,damage,weapon,xx,readytofire,reload;
+	private String img = "Submarine.png";
+	private boolean moving,shooting;
+	private int direction;
+	private Map map;
 	
 	
-	public void Player(int x, int y){
+	public Player(int x, int y){
+		this.reload = 5;
+		this.readytofire = 0;
+		this.direction = 0;
 		this.x = x;
 		this.y = y;
 	}
 
 	
-	public void move(char c){
-		if (c == KeyEvent.VK_1){
+	public void move(int[] keys){
+		if (keys[0] == 1){
 			dx = -3;
+			direction = 0;
+			moving = true;
 		}
-		else if (c == KeyEvent.VK_3){
+		if (keys[2] == 1){
 			dx = 3;
+			direction = 1;
+			moving = true;
 		}
-		else if (c == KeyEvent.VK_2){
+		if (keys[1] == 1){
 			dy = 3;
 		}
-		else if (c == KeyEvent.VK_5){
+		if (keys[3] == 1){
 			dy = -3;
 		}
-			
+	}
+	
+	public void stop(int[] keys){
+		if(keys[0] == 0 && keys[2] == 0){dx = 0;moving = false;}
+		if(keys[1] == 0 && keys[3] == 0){dy = 0;}
+	}
+	
+	public boolean getMoving(){
+		return this.moving;
+	}
+	
+	public void setShooting(boolean s){
+		this.shooting = s;
+	}
+	
+	public void tick(){
+		if (shooting && readytofire== 0){
+			this.map.addMissiles(new Missile(x+100, y+40));
+			readytofire = reload;
+		}
+		if (dx != 0){
+			xx = xx + dx;
+		}
+		if (dy != 0){
+			y = y + dy;
+		}
+		if (readytofire > 0){readytofire = readytofire-1;}
+		
+		//lager bobbler :)
+		this.map.addStuff(new Bubble(this.x-(int) (Math.random()*10),this.y+40+((int)Math.random()*10)));
+		
 	}
 	
 	
 	//getters og setters :D
+	
+	public void setMap(Map m){
+		this.map = m;
+	}
+	
+	public int getDirection(){
+		return this.direction;
+	}
+	
+	public int[] getBox(){
+		int [] a = {this.x,this.y+15,x+128,y+64};
+		return a;
+	}
+	
 	public String getImg(){
 		return this.img;
 	}
@@ -90,6 +144,13 @@ public class Player {
 
 	public void setWeapon(int weapon) {
 		this.weapon = weapon;
+	}
+
+
+	@Override
+	public void setDirection(int d) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
