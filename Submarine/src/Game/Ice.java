@@ -37,6 +37,9 @@ public class Ice implements obj{
 		case 0:this.x = x +3; break;
 		case 1:this.x = x -3; break;
 		}
+		if(x < -640){
+			setDamage(true);
+		}
 	}
 
 	@Override

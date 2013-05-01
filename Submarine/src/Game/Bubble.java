@@ -16,7 +16,7 @@ public class Bubble implements obj {
 	}
 	
 	public Bubble(int x, int y){
-		this.despawne = (int) (Math.random()*20) + 5;
+		this.despawne = (int) (Math.random()*40) + 10;
 		this.x = x;
 		this.y = y;
 	}
@@ -47,7 +47,7 @@ public class Bubble implements obj {
 			case 1:this.x = x -3; break;
 			}
 		}
-		if (this.despawne<0){this.damage = true;}
+		if (this.despawne<=0){this.damage = true;}
 	}
 
 	@Override

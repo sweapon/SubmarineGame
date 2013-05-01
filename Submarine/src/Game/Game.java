@@ -8,15 +8,17 @@ public class Game {
 	private Generator gen;
 	private int level,position;
 	private ArrayList<Map> world = new ArrayList<Map>();
+	private DisplayPlayerStats dps;
 	
 	public Game(){
-		world.add(new Map());
 
 		this.position = 0;
-		this.player = new Player(50,10);
+		this.player = new Player(50,200);
+		world.add(new Map(player));
 		this.player.setMap(world.get(position));
-		this.gen = new Generator(world.get(position));
-		
+		this.gen = new Generator(world.get(position),this.player);
+		this.dps = new DisplayPlayerStats(this,player);
+		this.level = 1;
 	}
 	
 	public Map getMap(){
@@ -24,7 +26,6 @@ public class Game {
 	}
 	
 	public void tick(){
-		
 		gen.tick();
 		getMap().setMoving(player.getMoving());
 		getMap().setDirection(player.getDirection());
@@ -33,29 +34,37 @@ public class Game {
 		
 		// sjekker om playeren koliderer med ice stuff
 		for(obj i:getMap().getComponents()){
-			if ((checkCollition(player,i) || checkCollition(i, player)) && i.getClass() == Ice.class){
-			System.out.println("kolisjon");
-			((Ice) i).setDamage(true);
+			dps.upDate();
+			if (checkCollition(player,i) || checkCollition(i, player)){
+				if( i.getClass() == Ice.class){
+					((Ice) i).setDamage(true);
+				}
+				if (i.getClass() == MonsterMissile.class){
+					player.addToHealth(5);
+					((MonsterMissile)i).setDamage(true);
+				}
 			}
 		}
 		
 		//sjekker om noen missile treffer noe med ice
 		for(obj i: getMap().getMissile()){
-			for(obj j:getMap().getComponents()){
-				if ((checkCollition(j,i) || checkCollition(i, j)) && j.getClass() == Ice.class){
-				System.out.println("kolisjon");
-				((Missile) i).setDamage(true);
-				((Ice) j).setDamage(true);
+			for(obj j:getMap().getMonsters()){
+				if ((checkCollition(j,i) || checkCollition(i, j))){
+					if(j.getClass() == Ice.class){
+						((Missile) i).setDamage(true);
+						((Ice) j).setDamage(true);
+					}
+					else if(j.getClass() == Monster.class){
+						((Missile) i).setDamage(true);
+						((Monster) j).setDamage(((Missile) i).getDamagenumber());
+					}
 				}
 			}
 		}
 	}
 	
-	public Player getPlayer(){
-		return this.player;
-	}
-	
-	//sjekker om det er kollisjon mellom to objekter
+	//sjekker om det er kollisjon mellom to objekter getBox gir har alle obj objektene og den retunerer alle de fire hjørnene
+	//som et objet består av og på den måten sjekker om obj b har noen av sine hjørner inne i obj a
 	public boolean checkCollition(obj a,obj b){
 			if (((a.getBox()[0] < b.getBox()[2] && a.getBox()[0] > b.getBox()[0])
 				|| (a.getBox()[2] > b.getBox()[0] && a.getBox()[2] < b.getBox()[2]))
@@ -65,6 +74,18 @@ public class Game {
 				return true;
 			}
 		return false;
+	}
+	
+	
+	public int getLevel(){
+		return this.level;
+	}
+	public Player getPlayer(){
+		return this.player;
+	}
+	
+	public DisplayPlayerStats getDps(){
+		return this.dps;
 	}
 
 }

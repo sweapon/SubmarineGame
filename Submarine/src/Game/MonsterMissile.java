@@ -1,20 +1,20 @@
 package Game;
 
-public class Missile implements obj {
-	
-	private String img = "missile.png";
+public class MonsterMissile implements obj {
+
+	private String img = "monstermissile.png";
 	private int x,y,direction,Damagenumber,speed;
 	private boolean moving,damage;
 	
 	//constructor
-	public Missile(int x, int y){
+	public MonsterMissile(int x, int y){
 		this.speed = 8;
 		this.x = x;
 		this.y = y;
 	}
 	
 	public void tick(){
-		this.x = x +speed;
+		this.x = x - speed;
 		if (moving){
 			switch (direction){
 			case 0:this.x = x +3; break;
@@ -48,7 +48,6 @@ public class Missile implements obj {
 	public String getImg(){
 		return this.img;
 	}
-	
 	
 	public void setMoving(boolean a){
 		this.moving = a;

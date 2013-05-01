@@ -4,7 +4,7 @@ package Game;
 
 public class Player implements obj{
 	
-	private int x,y,dx,dy,healt,damage,weapon,xx,readytofire,reload;
+	private int x,y,dx,dy,healt,damage,weapon,xx,readytofire,reload,score,fullHealt;
 	private String img = "Submarine.png";
 	private boolean moving,shooting;
 	private int direction;
@@ -12,11 +12,14 @@ public class Player implements obj{
 	
 	
 	public Player(int x, int y){
-		this.reload = 5;
+		this.reload = 10;
 		this.readytofire = 0;
 		this.direction = 0;
 		this.x = x;
 		this.y = y;
+		this.score = 0;
+		this.healt = 100;
+		this.fullHealt = 100;
 	}
 
 	
@@ -61,17 +64,38 @@ public class Player implements obj{
 			xx = xx + dx;
 		}
 		if (dy != 0){
-			y = y + dy;
+			
+			//sørger for at playeren ikke går utenfor skjermen :)
+			if(!((y + dy)<0-15) && !((y + dy)>480-64)){
+				y = y + dy;
+			}
 		}
 		if (readytofire > 0){readytofire = readytofire-1;}
 		
 		//lager bobbler :)
-		this.map.addStuff(new Bubble(this.x-(int) (Math.random()*10),this.y+40+((int)Math.random()*10)));
+		this.map.addStuff(new Bubble(this.x-(int) (Math.random()*10),this.y+36+(int)(Math.random()*10)));
 		
 	}
 	
+	public void addToScore(int s){
+		this.score = this.score + s;
+	}
+	
+	public void addToHealth(int h){
+		this.healt = this.healt - h;
+	}
 	
 	//getters og setters :D
+	
+	
+	
+	public int getFullHealt(){
+		return this.fullHealt;
+	}
+	
+	public int getScore(){
+		return this.score;
+	}
 	
 	public void setMap(Map m){
 		this.map = m;
