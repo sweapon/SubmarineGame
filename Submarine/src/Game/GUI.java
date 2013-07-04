@@ -26,7 +26,7 @@ public class GUI extends GraphicsProgram{
 		l.setFont(f);
 		
         this.setSize(640, 480);
-		new SwingTimer(1000/30,this).start();
+		new SwingTimer(1000/60,this).start();
 	}
 	
 	public void init(){
