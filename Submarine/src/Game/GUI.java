@@ -26,7 +26,10 @@ public class GUI extends GraphicsProgram{
 	public void run(){
         this.setSize(640, 480);
 		new SwingTimer(1000/60,this).start();
+<<<<<<< HEAD
 		this.state = GameStates.menue;
+=======
+>>>>>>> cbb289eba5e74439f103e0b52daee7d36df53e0c
 	}
 	
 	public void init(){

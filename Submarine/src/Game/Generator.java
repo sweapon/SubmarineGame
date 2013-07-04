@@ -19,7 +19,7 @@ public class Generator {
 	 }
 	 
 	 public void tick(){
-		 newIce = (int) (Math.random()*15);
+		 newIce = (int) (Math.random()*10);
 		 
 		 if (newIce==0 && map.getComponents().size()< 128){
 			 int newY = (int) (Math.random()*480);
