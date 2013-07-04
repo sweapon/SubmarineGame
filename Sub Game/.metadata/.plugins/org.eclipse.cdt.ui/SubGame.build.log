@@ -1,0 +1,8 @@
+
+**** Clean-only build of configuration Default for project SubGame ****
+
+C:\Tools\android-ndk-r8e\ndk-build.cmd clean 
+Android NDK: Your APP_BUILD_SCRIPT points to an unknown file: ./jni/Android.mk    
+C:/Tools/android-ndk-r8e/build/core/add-application.mk:165: *** Android NDK: Aborting...    .  Stop.
+
+**** Build Finished ****
