@@ -1,0 +1,106 @@
+package com.application.subgame.components;
+
+import com.application.subgame.MainActivity;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.util.Log;
+
+public class HomingMissile extends Missile{
+	
+	private static final String TAG = MainActivity.class.getSimpleName();
+	
+	private Enemy target;
+	private int destinationy,destiantionx,dy,dx;
+	private Matrix matrix;
+	
+	public HomingMissile(int x, int y, int bd, int var, Bitmap b,Enemy target){
+		super(x, y, bd, var, b);
+		this.target = target;
+		this.dy = 0;
+		this.dx = 0;
+		this.matrix = new Matrix();
+	}
+	
+	public void tick(){
+		//if (target != null){
+			//if (!target.getDestroyed()){
+				destinationy = 300;
+				destiantionx = 300;
+				//y
+				if(destinationy > this.y){
+					if (dy < 12){
+						dy = dy + 1;
+					}
+				}
+				else if(destinationy < this.y){
+					if (dy > -12){
+						dy = dy - 1;
+					}
+				}
+				//x
+				if(destiantionx > this.x){
+					if (dx < 12){
+						dx = dx + 3;
+					}
+				}
+				else if(destiantionx < this.x){
+					if (dx > -12){
+						dx = dx - 3;
+					}
+				}
+				setX(this.x + dx);
+				setY(this.y + dy);
+//			}else{
+//				if (dx < 15){
+//					dx = dx + 3;
+//				}
+//				if(dy != 0){
+//					if (dy>0) dy = dy - 1;
+//					if (dy<0) dy = dy + 1;
+//				}
+//				setX(this.x + dx);
+//				setY(this.y + dy);
+//			}
+//		}
+//		if(target == null){
+//			if (dx < 15){
+//				dx = dx + 3;
+//			}
+//			super.setX(this.x + dx);
+//		}
+	}
+	
+	public void draw(Canvas canvas) {
+		
+		float dx = this.dx;
+		float dy = this.dy;
+		float angel = 0;
+		
+		if((dx >= 0 && dy >= 0) || (dy < 0 && dx >= 0)){
+			if(dy == 0) angel = 0;
+			else angel = dx/dy;
+			angel = (float) (Math.acos(angel)/Math.PI*180);
+			Log.d(TAG,"sinus");
+			Log.d(TAG,Float.toString(angel));
+		}
+		else if (dx < 0 && dy >= 0){
+			if(dx == 0)angel = -1;
+			else angel = dy/dx;
+			angel = (float) (Math.acos(angel)/Math.PI*180);
+			Log.d(TAG,"cosinus");
+			Log.d(TAG,Float.toString(angel));
+		}else{
+			angel = dx/dy;
+			angel = (float) (Math.acos(angel)/Math.PI*180)+180;
+			Log.d(TAG,"rest");
+		}
+		//Log.d(TAG,Double.toString((Math.asin(angel)/Math.PI*180)));
+		matrix.setRotate(angel ,this.bitmap.getWidth()/2 , this.bitmap.getHeight()/2);
+		matrix.postTranslate(this.x, this.y);
+		//canvas.drawBitmap(this.bitmap, this.x,this.y, null);
+		canvas.drawBitmap(this.bitmap, matrix, null);
+	}
+
+}

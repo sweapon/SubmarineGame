@@ -1,0 +1,74 @@
+package com.application.subgame;
+
+import com.application.subgame.components.Background;
+import com.application.subgame.components.Player;
+
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+
+public class GameEnd {
+	
+	private int expbefore,expnow,level;
+	private Rect rect;
+	private double levelcompleate;
+	private Background bg;
+	private String Highscore;
+	private Paint paint,compleate;
+	private Player player;
+	
+	public GameEnd(Rect rect,Resources res,Player player){
+		this.rect = rect;
+		this.expnow = 0;
+		this.expbefore = 0;
+		this.Highscore = "Score";
+		this.bg = new Background(0,0,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.background),rect.width(),rect.height(),true));
+		this.paint = new Paint();
+		this.paint.setTextSize(40);
+		this.compleate = new Paint();
+		this.compleate.setColor(Color.GREEN);
+		this.player = player;
+	}
+	
+	public void tick(){
+		if (!(expbefore == expnow)){
+			if((expbefore + 10)< expnow){
+				expbefore = expbefore + 10;
+			}else if(expbefore < expnow){
+				expbefore = expnow;
+			}
+			if (expbefore != 0){
+				levelcompleate = ((expbefore-player.nextLevel(level-1))/(player.nextLevel(level)-player.nextLevel(level-1)));
+			}else{
+				levelcompleate = 0;
+			}
+			if (expbefore > player.nextLevel(level)){
+				level = level + 1;
+			}
+		}else{
+			levelcompleate = ((expbefore-player.nextLevel(level-1))/(player.nextLevel(level)-player.nextLevel(level-1)));
+		}
+	}
+	
+	public void draw(Canvas canvas){
+		bg.draw(canvas);
+		canvas.drawText(Highscore, rect.width()/8, rect.height()/6, paint);
+		canvas.drawText(Integer.toString(player.getScore()), rect.width()*3/8, rect.height()/6, paint);
+		
+		canvas.drawText("Level", rect.width()/8, rect.height()*2/6, paint);
+		canvas.drawText(Integer.toString(player.getExperience()), rect.width()*3/8, rect.height()*2/6, paint);
+		
+		canvas.drawRect(rect.width()/8, rect.height()*4/8, rect.width()*7/8, rect.height()*5/8, paint);
+		canvas.drawRect(rect.width()/8, rect.height()*4/8, (float) (rect.width()/8 + (rect.width()*6/8)*levelcompleate), rect.height()*5/8, compleate);
+	}
+	
+	public void setExpnow(int exp,int level){
+		this.level = level;
+		this.expbefore = this.expnow;
+		this.expnow = exp;
+	}
+}

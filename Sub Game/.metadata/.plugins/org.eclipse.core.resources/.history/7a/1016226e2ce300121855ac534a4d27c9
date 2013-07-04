@@ -1,0 +1,5 @@
+package com.application.subgame;
+
+public class GameEnd {
+
+}

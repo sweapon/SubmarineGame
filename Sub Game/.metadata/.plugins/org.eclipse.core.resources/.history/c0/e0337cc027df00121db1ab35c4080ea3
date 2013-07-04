@@ -1,0 +1,20 @@
+package com.application.subgame;
+
+public class Start extends Thread{
+	
+	private MainGamePanel mainGame;
+	
+	public Start(MainGamePanel mgp){
+		this.mainGame = mgp;
+	}
+	
+	public void run(){
+		try {
+			super.sleep(1500);
+			mainGame.setState(GameStates.game);
+		} catch (InterruptedException e) {
+		}
+		mainGame.setState(GameStates.game);
+	}
+
+}

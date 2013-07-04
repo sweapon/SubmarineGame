@@ -1,0 +1,43 @@
+package com.application.subgame;
+
+import com.application.subgame.components.Background;
+
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+
+public class GameEnd {
+	
+	private int expbefore,expnow;
+	private Rect rect;
+	private Background bg;
+	private String Highscore;
+	private Paint paint;
+	
+	public GameEnd(Rect rect,Resources res){
+		this.rect = rect;
+		this.expnow = 0;
+		this.expbefore = 0;
+		this.Highscore = "Score";
+		this.bg = new Background(0,0,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.background),rect.width(),rect.height(),true));
+		
+		
+	}
+	
+	
+	
+	
+	public void draw(Canvas canvas){
+		bg.draw(canvas);
+		canvas.drawText(Highscore, rect.width()/8, rect.height()/6, paint);
+		canvas.drawText("Level", rect.width()*2/8, rect.height()/6, paint);
+		canvas.drawText("1", rect.width()*2/8, rect.height()*2/6, paint);
+		
+		canvas.drawRect(left, top, right, bottom, paint);
+		canvas.drawRect(left, top, right, bottom, paint);
+		
+	}
+}

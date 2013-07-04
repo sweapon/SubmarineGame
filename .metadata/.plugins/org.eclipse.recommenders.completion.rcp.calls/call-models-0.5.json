@@ -1,0 +1,17 @@
+{
+  "C:\\Program Files (x86)\\Java\\jre7\\lib\\rt.jar": {
+    "coordinate": "jre:jre:zip:call:1.0.0",
+    "location": "C:\\Program Files (x86)\\Java\\jre7\\lib\\rt.jar",
+    "status": "RESOLVED"
+  },
+  "C:\\Users\\Erik\\Documents\\GitHub\\SubmarineGame\\Submarine\\libs\\acm.jar": {
+    "location": "C:\\Users\\Erik\\Documents\\GitHub\\SubmarineGame\\Submarine\\libs\\acm.jar",
+    "status": "UNRESOLVED",
+    "error": "No call model found for \u0027C:\\Users\\Erik\\Documents\\GitHub\\SubmarineGame\\Submarine\\libs\\acm.jar\u0027. Neither fingerprint \u002746baa389b36f1e13cff8621cb529c25892f96442\u0027 nor symbolic name \u0027acm\u0027 are known."
+  },
+  "C:\\Users\\Erik\\Documents\\GitHub\\SubmarineGame\\Submarine\\src": {
+    "location": "C:\\Users\\Erik\\Documents\\GitHub\\SubmarineGame\\Submarine\\src",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027C:\\Users\\Erik\\Documents\\GitHub\\SubmarineGame\\Submarine\\src\u0027. Skipped."
+  }
+}

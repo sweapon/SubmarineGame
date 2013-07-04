@@ -1,0 +1,101 @@
+package Game;
+
+import java.util.ArrayList;
+
+import Game.components.DisplayPlayerStats;
+import Game.components.Ice;
+import Game.components.Missile;
+import Game.components.Enemy;
+import Game.components.EnemyMissile;
+import Game.components.Player;
+
+public class Game {
+	
+	private Player player;
+	private Generator gen;
+	private int level,position;
+	private ArrayList<Map> world = new ArrayList<Map>();
+	private DisplayPlayerStats dps;
+	
+	public Game(){
+		this.position = 0;
+		this.player = new Player(50,200);
+		world.add(new Map(player));
+		this.player.setMap(world.get(position));
+		this.gen = new Generator(world.get(position),this.player);
+		this.dps = new DisplayPlayerStats(this,player);
+		this.level = 1;
+	}
+	
+	public Map getMap(){
+		if(player.getXx() > 500){
+			this.level = this.level +1;
+			player.setXx(0);
+//			world.clear();
+//			world.add(new Map(player));
+		}
+		return world.get(position);
+	}
+	
+	public void tick(){
+		gen.tick();
+		getMap().tick();
+		player.tick();
+		
+		// sjekker om playeren koliderer med ice stuff
+		for(obj i:getMap().getComponents()){
+			dps.upDate();
+			if (checkCollition(player,i) || checkCollition(i, player)){
+				if( i.getClass() == Ice.class){
+					((Ice) i).setDamage(true);
+				}
+				if (i.getClass() == EnemyMissile.class){
+					player.addToHealth(5);
+					((EnemyMissile)i).setDamage(true);
+				}
+			}
+		}
+		
+		//sjekker om noen missile treffer noe med ice
+		for(obj i: getMap().getMissile()){
+			for(obj j:getMap().getMonsters()){
+				if ((checkCollition(j,i) || checkCollition(i, j))){
+					if(j.getClass() == Ice.class){
+						((Missile) i).setDamage(true);
+						((Ice) j).setDamage(true);
+					}
+					else if(j.getClass() == Enemy.class){
+						((Missile) i).setDamage(true);
+						((Enemy) j).setDamage(((Missile) i).getDamagenumber());
+					}
+				}
+			}
+		}
+	}
+	
+	//sjekker om det er kollisjon mellom to objekter getBox gir har alle obj objektene og den retunerer alle de fire hjørnene
+	//som et objet består av og på den måten sjekker om obj b har noen av sine hjørner inne i obj a
+	public boolean checkCollition(obj a,obj b){
+			if (((a.getBox()[0] < b.getBox()[2] && a.getBox()[0] > b.getBox()[0])
+				|| (a.getBox()[2] > b.getBox()[0] && a.getBox()[2] < b.getBox()[2]))
+				&& ((a.getBox()[1] < b.getBox()[3] && a.getBox()[1] > b.getBox()[1])
+				||	(a.getBox()[3] > b.getBox()[1] && a.getBox()[3] < b.getBox()[3])))
+				{
+				return true;
+			}
+		return false;
+	}
+	
+	
+	public int getLevel(){
+		return this.level;
+	}
+	public Player getPlayer(){
+		return this.player;
+	}
+	
+	public DisplayPlayerStats getDps(){
+		return this.dps;
+	}
+
+}

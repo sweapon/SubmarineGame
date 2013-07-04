@@ -1,0 +1,30 @@
+package com.application.subgame;
+
+import com.application.subgame.components.Background;
+
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+
+public class GameEnd {
+	
+	private int expbefore,expnow;
+	private Rect rect;
+	private Background bg;
+	
+	public GameEnd(Rect rect,Resources res){
+		this.rect = rect;
+		this.expnow = 0;
+		this.expbefore = 0;
+		this.bg = new Background(0,0,Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.background),rect.width(),rect.height(),true);
+		
+		
+	}
+	
+	public void draw(Canvas canvas){
+		
+	}
+
+}

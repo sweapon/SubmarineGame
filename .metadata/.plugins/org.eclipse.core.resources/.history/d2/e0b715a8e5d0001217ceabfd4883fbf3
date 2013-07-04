@@ -1,0 +1,47 @@
+package Game.components;
+
+import java.awt.Color;
+
+import acm.graphics.GLabel;
+
+public class DisplayDamage {
+	
+	private int x,y,despawne;
+	private boolean remove,good;
+	private GLabel text;
+
+	
+	public DisplayDamage(int d,int x,int y,boolean good){
+		this.good = good;
+		this.x = x;
+		this.y = y;
+		if (this.x > 640){this.x = 580;}
+		text = new GLabel(Integer.toString(d));
+		this.despawne = 40;
+		if (good){text.setColor(Color.yellow);}
+		else{text.setColor(Color.red);}
+	}
+	
+	public void tick(){
+		this.y = this.y - 1;
+		this.despawne = this.despawne-1;
+		if (this.despawne<0){this.remove = true;}
+	}
+	
+	public int getX(){
+		return this.x;
+	}
+	
+	public int getY(){
+		return this.y;
+	}
+	
+	public boolean getRemove(){
+		return this.remove;
+	}
+	
+	public GLabel getText(){
+		return this.text;
+	}
+
+}

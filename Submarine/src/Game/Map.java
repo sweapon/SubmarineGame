@@ -2,6 +2,14 @@ package Game;
 
 import java.util.ArrayList;
 
+import Game.components.Bubble;
+import Game.components.DisplayDamage;
+import Game.components.Ice;
+import Game.components.Missile;
+import Game.components.Enemy;
+import Game.components.EnemyMissile;
+import Game.components.Player;
+
 public class Map {
 	
 	// her er det 4 lister som inneholder de viktige komponenete i spillet components er alle de obj objektene som skal tegnes som
@@ -17,13 +25,14 @@ public class Map {
 	
 	private ArrayList<DisplayDamage> text = new ArrayList<DisplayDamage>();
 	
-	private boolean moving;
 	private int direction;
 	private Player player;
+	private Background bg;
 	
 	public Map(Player p){
 		player = p;
-		addMonsters(new Monster(620,200,p,this));
+		//addMonsters(new Enemy(620,200,p,this));
+		this.bg = new Background(0,0);
 	}
 	
 	public void tick(){
@@ -31,15 +40,15 @@ public class Map {
 		//her sjekkes og behandles alle kollisjoner
 		
 		for(obj i:components){
-			if (moving){
+			if (player.getMoving()){
 				if(i.getClass() == Bubble.class){
-					((Bubble)i).setMoving(moving);
+					((Bubble)i).setMoving(player.getMoving());
 					i.setDirection(direction);
 					i.tick();
 				}
 			}
 			else if(i.getClass() == Bubble.class){
-				((Bubble)i).setMoving(moving);
+				((Bubble)i).setMoving(player.getMoving());
 				i.tick();
 			}
 			
@@ -53,16 +62,18 @@ public class Map {
 		
 		//behandler kollisjonene til missiles samtidig som den aktiverer dems tick funkjson
 		for(obj i: missiles){
-			if (moving){
-				((Missile)i).setMoving(moving);
+			if (player.getMoving()){
+				((Missile)i).setMoving(player.getMoving());
 				i.setDirection(direction);
 				i.tick();
 			}else{i.tick();}
 			
-			((Missile) i).setMoving(moving);
+			((Missile) i).setMoving(player.getMoving());
 			if(i.getX()>= 700 || ((Missile)i).getDamage()){
 				//legger til damage på skjermen og sørger for at den blir fjernet fra mappet
-				text.add(new DisplayDamage(((Missile)i).getDamagenumber(), i.getX() +32, i.getY()-(int)(Math.random()*5)*4));
+				if (((Missile)i).getDamagenumber() != 0){
+				text.add(new DisplayDamage(((Missile)i).getDamagenumber(), i.getX() +32, i.getY()-(int)(Math.random()*5)*4,true));
+				}
 				remove.add(i);
 			}
 		}
@@ -73,7 +84,7 @@ public class Map {
 		// monsters ticks og behanlig av ødelagte monstre
 		for(obj i: monsters){
 			if(i.getClass() == Ice.class){
-				if(moving){
+				if(player.getMoving()){
 					i.setDirection(direction);
 					i.tick();
 				}
@@ -82,20 +93,24 @@ public class Map {
 			if (i.getClass() == Ice.class && ((Ice) i).getDamage()){
 				remove.add(i);
 			}
-			if (i.getClass() == Monster.class && ((Monster) i).getDestroyed()){
+			if (i.getClass() == Enemy.class && ((Enemy) i).getDestroyed()){
 				remove.add(i);
 			}
 		}
 		
+		//lager bobler når monstre dør :D burde skirve om til en universal formel!
 		for(obj i:remove){
-			if(i.getClass() == Monster.class){
-				player.addToScore(50);
+			if(i.getClass() == Enemy.class){
+				player.addToScore(((Enemy)i).getScore());
+				for(int q = 0; q< 40; q++){
+					addStuff(new Bubble(i.getX() + (int)(Math.random()*64),i.getY()  + (int)(Math.random()*32)));
+				}
 			}
 			else if(i.getClass() == Ice.class){
 				player.addToScore(5);
-			}
-			for(int q = 0; q< 40; q++){
-				addStuff(new Bubble(i.getX() + 38 + (int)(Math.random()*60),i.getY() + 38 + (int)(Math.random()*60)));
+				for(int q = 0; q< 40; q++){
+					addStuff(new Bubble(i.getX() + 38 + (int)(Math.random()*60),i.getY() + 38 + (int)(Math.random()*60)));
+				}
 			}
 		}
 		components.removeAll(remove);
@@ -103,16 +118,19 @@ public class Map {
 		remove.clear();
 		
 		for(obj i:monstermissiles){
-			if(moving){
+			if(player.getMoving()){
 				i.setDirection(direction);
-				((MonsterMissile)i).setMoving(moving);
+				((EnemyMissile)i).setMoving(player.getMoving());
 				i.tick();
 			}
 			else{
-				((MonsterMissile)i).setMoving(moving);
 				i.tick();
 			}
-			if(i.getX()<= 10 || ((MonsterMissile)i).getDamage()){
+			((EnemyMissile)i).setMoving(player.getMoving());
+			if(i.getX()<= 10 || ((EnemyMissile)i).getDamage()){
+				if (((EnemyMissile)i).getDamage()){
+				text.add(new DisplayDamage(((EnemyMissile)i).getDamagenumber(), i.getX() -32, i.getY()-(int)(Math.random()*5)*4,false));		
+				}
 				remove.add(i);
 			}
 		}
@@ -128,6 +146,10 @@ public class Map {
 			}
 		}
 		text.remove(d);
+	}
+	
+	public Background getBg(){
+		return this.bg;
 	}
 	
 	public ArrayList<DisplayDamage> getText(){
@@ -168,9 +190,17 @@ public class Map {
 	public ArrayList<obj> getMonsters(){
 		return this.monsters;
 	}
-
-	public void setMoving(boolean moving) {
-		this.moving = moving;
+	
+	public void clearAll(){
+		this.components.clear();
+		this.missiles.clear();
+		this.monsters.clear();
+		this.monstermissiles.clear();
+		this.text.clear();
 	}
+
+//	public void setMoving(boolean moving) {
+//		this.moving = moving;
+//	}
 
 }

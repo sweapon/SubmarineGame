@@ -1,0 +1,48 @@
+package com.application.subgame.components;
+
+import java.util.ArrayList;
+
+import android.graphics.BitmapFactory;
+import com.application.subgame.Game;
+import com.application.subgame.R;
+
+public class HomingMissileAttack {
+	
+	private Game game;
+	private int dmg,var;
+	private Player player;
+	
+	public HomingMissileAttack(Game game,int dmg, int var, int level,Player player){
+		this.game = game;
+		this.dmg = dmg*(level/5);
+		this.var = var;
+		this.player = player;
+	}
+	
+	public void attack(){
+		Enemy target = null;
+		ArrayList<Enemy> list = new ArrayList<Enemy>();
+		for (obj j: game.getMap().getPotentionalMonsters()){
+			if (j.getClass() == Enemy.class){
+				list.add((Enemy)j);
+			}
+		}
+		int targetposition = 0;
+		for (int i = 0; i< 10;i++){
+			int ranx = (int)(Math.random()*40);
+			int rany = (int)(Math.random()*40);
+			if (list.size() == 0){
+				game.getMap().addMissiles(new HomingMissile(player.getX() + 36 + ranx,player.getY() - 30 + rany,this.dmg,this.var, BitmapFactory.decodeResource(game.getResource(), R.drawable.homingmissile),null));
+				game.getMap().addStuff(new Bubble(player.getX() + 22 + ranx,player.getY() - 20 + rany,BitmapFactory.decodeResource(game.getResource(), R.drawable.bubble)));
+			}else{
+				target = list.get(targetposition);
+				game.getMap().addMissiles(new HomingMissile(player.getX() + 36 + ranx,player.getY() - 30 + rany,this.dmg,this.var, BitmapFactory.decodeResource(game.getResource(), R.drawable.homingmissile),target));
+				game.getMap().addStuff(new Bubble(player.getX() + 22 + ranx,player.getY() - 20 + rany,BitmapFactory.decodeResource(game.getResource(), R.drawable.bubble)));
+				targetposition = targetposition + 1;
+			}
+			if(targetposition >= list.size()) targetposition = 0;
+		}
+		list.clear();
+	}
+
+}

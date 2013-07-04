@@ -1,15 +1,21 @@
 package Game;
 
+import Game.components.Ice;
+import Game.components.Enemy;
+import Game.components.Player;
+
 
 public class Generator {
 	
-	 int newIce;	
+	 int newIce, newMonster;	
 	 private Map map;
 	 private Player player;
+	 private Game game;
 	 
-	 public Generator(Map map, Player player){
+	 public Generator(Map map, Player player, Game game){
 		 this.map = map;
 		 this.player = player;
+		 this.game = game;
 	 }
 	 
 	 public void tick(){
@@ -21,10 +27,10 @@ public class Generator {
 			 map.addMonsters(new Ice(640+ newX,newY));
 		 }
 		 
-		 newIce = (int) (Math.random()*50);
+		 newMonster = (int) (Math.random()*50-game.getLevel());
 		 
-		 if (newIce==0 && map.getMonsters().size()< 128 && !map.getMonsters().contains(Monster.class)){
-			 map.addMonsters(new Monster(620,200,player,map));
+		 if (newMonster==0 && map.getMonsters().size()< 128 && !map.getMonsters().contains(Enemy.class)){
+			 map.addMonsters(new Enemy(620,200,player,map,game));
 		 }
 	}
 }

@@ -2,6 +2,13 @@ package Game;
 
 import java.util.ArrayList;
 
+import Game.components.DisplayPlayerStats;
+import Game.components.Ice;
+import Game.components.Missile;
+import Game.components.Enemy;
+import Game.components.EnemyMissile;
+import Game.components.Player;
+
 public class Game {
 	
 	private Player player;
@@ -9,26 +16,39 @@ public class Game {
 	private int level,position;
 	private ArrayList<Map> world = new ArrayList<Map>();
 	private DisplayPlayerStats dps;
+	private GUI GUI;
 	
-	public Game(){
-
+	public Game(GUI gui){
+		this.GUI = gui;
 		this.position = 0;
 		this.player = new Player(50,200);
 		world.add(new Map(player));
 		this.player.setMap(world.get(position));
-		this.gen = new Generator(world.get(position),this.player);
+		this.gen = new Generator(world.get(position),this.player,this);
 		this.dps = new DisplayPlayerStats(this,player);
 		this.level = 1;
 	}
 	
 	public Map getMap(){
+		if(player.getXx() > 5000){
+			this.level = this.level +1;
+			player.setXx(0);
+			world.get(position).clearAll();
+			// det neste som skal gjøres er å implementere storen :D
+			//GUI.setState(GameStates.store);
+		}
 		return world.get(position);
 	}
 	
 	public void tick(){
+		if (player.getHealt() <= 0){
+			GUI.setState(GameStates.menue);
+			player.setHealt(player.getFullHealt());
+			player.setScore(0);
+			world.get(position).clearAll();
+		}
+		
 		gen.tick();
-		getMap().setMoving(player.getMoving());
-		getMap().setDirection(player.getDirection());
 		getMap().tick();
 		player.tick();
 		
@@ -39,9 +59,10 @@ public class Game {
 				if( i.getClass() == Ice.class){
 					((Ice) i).setDamage(true);
 				}
-				if (i.getClass() == MonsterMissile.class){
-					player.addToHealth(5);
-					((MonsterMissile)i).setDamage(true);
+				if (i.getClass() == EnemyMissile.class){
+					((EnemyMissile)i).setDamage(true);
+					System.out.println(((EnemyMissile) i).getDamagenumber());
+					player.addToHealth(((EnemyMissile) i).getDamagenumber());
 				}
 			}
 		}
@@ -54,9 +75,9 @@ public class Game {
 						((Missile) i).setDamage(true);
 						((Ice) j).setDamage(true);
 					}
-					else if(j.getClass() == Monster.class){
+					else if(j.getClass() == Enemy.class){
 						((Missile) i).setDamage(true);
-						((Monster) j).setDamage(((Missile) i).getDamagenumber());
+						((Enemy) j).setDamage(((Missile) i).getDamagenumber());
 					}
 				}
 			}
@@ -76,6 +97,12 @@ public class Game {
 		return false;
 	}
 	
+	public void reset(){
+		this.player.setScore(0);
+		this.player.setHealt(this.player.getFullHealt());
+		this.player.setXx(0);
+		this.level = 1;
+	}
 	
 	public int getLevel(){
 		return this.level;
